@@ -14,13 +14,12 @@ defmodule NektoClient.WebSocket.Receiver do
   """
   def next(socket) do
     case Client.recv!(socket) do
-      {:json, response} ->
-        handle_response(response)
-      {:ping, _} ->
-        Web.send!(socket, {:pong, ""})
-        :ping
-      _ ->
-        :error
+      {:json, data} ->
+        {:ok, handle_response(data)}
+      {:ping, data} ->
+        {:ping, data}
+      data ->
+        {:error, data}
     end
   end
 
@@ -34,9 +33,9 @@ defmodule NektoClient.WebSocket.Receiver do
 
   defp listen_loop(socket, gen_event) do
     case next(socket) do
-      :ping -> nil
-      :error -> nil
-      data -> GenEvent.notify(gen_event, data)
+      {:ok, data} -> GenEvent.notify(gen_event, data)
+      {:ping, _} -> Web.send!(socket, {:pong, ""})
+      _ -> nil
     end
     listen_loop(socket, gen_event)
   end
