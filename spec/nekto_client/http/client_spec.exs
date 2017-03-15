@@ -23,7 +23,7 @@ defmodule NektoClient.Http.ClientSpec do
     let :body, do: ""
 
     before do
-      allow HTTPoison|> to(
+      allow HTTPoison |> to(
         accept :head!,
         fn(url) ->
           expect url |> to(eq host() <> path())
