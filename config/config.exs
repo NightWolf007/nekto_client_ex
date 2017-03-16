@@ -30,6 +30,6 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 # config :nekto_client,
-#        host: "nekto.me"
+#        host: "nekto.me",
 #        ws_host: "chat.nekto.me",
 #        ws_path: "/websocket"
