@@ -30,6 +30,7 @@ defmodule NektoClient.Http.Headers do
        "expires=Sat, 20-Jan-18 12:22:48 GMT; " <>
        "path=/; domain=.nekto.me; HttpOnly"]
   """
+  @spec find(list({String.t, String.t}), String.t) :: list(String.t)
   def find(headers, header) do
     List.foldl(headers, [],
       fn(x, acc) ->

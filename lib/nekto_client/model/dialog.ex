@@ -13,6 +13,7 @@ defmodule NektoClient.Model.Dialog do
       iex> NektoClient.Model.Dialog.new(5, [1,2])
       %NektoClient.Model.Dialog{id: 5, uids: [1,2]}
   """
+  @spec new(integer, list(integer)) :: %NektoClient.Model.Dialog{}
   def new(id, uids) do
     %NektoClient.Model.Dialog{id: id, uids: uids}
   end

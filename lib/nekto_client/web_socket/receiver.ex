@@ -4,18 +4,24 @@ defmodule NektoClient.WebSocket.Receiver do
   """
 
   alias Socket.Web
-  alias NektoClient.WebSocket.Client
   alias NektoClient.Model.User
   alias NektoClient.Model.Dialog
   alias NektoClient.Model.Message
 
+  @typedoc """
+  Message from nekto.me WebSocket
+  """
+  @type message :: {atom, Map.t}
+
   @doc """
   Returns next message
   """
+  @spec next(Socket.Web.t) :: {:ok, message} | {:ping, binary} |
+                              {:error, Socket.Web.packet()}
   def next(socket) do
-    case Client.recv!(socket) do
-      {:json, data} ->
-        {:ok, handle_response(data)}
+    case Web.recv!(socket)do
+      {:text, data} ->
+        {:ok, data |> Poison.decode! |> handle_response}
       {:ping, data} ->
         {:ping, data}
       data ->
@@ -26,10 +32,10 @@ defmodule NektoClient.WebSocket.Receiver do
   @doc """
   Starts thread which listens messages and sends them to gen_event
   """
+  @spec listen(Socket.Web.t, GenEvent.t) :: none
   def listen(socket, gen_event) do
     listen_loop(socket, gen_event)
   end
-
 
   defp listen_loop(socket, gen_event) do
     case next(socket) do

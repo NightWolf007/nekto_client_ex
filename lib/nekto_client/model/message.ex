@@ -14,6 +14,7 @@ defmodule NektoClient.Model.Message do
       %NektoClient.Model.Message{id: 5, dialog_id: 10, uid: 12345,
                                  text: "test message"}
   """
+  @spec new(integer, integer, integer, String.t) :: %NektoClient.Model.Message{}
   def new(id, dialog_id, uid, text) do
     %NektoClient.Model.Message{
       id: id, dialog_id: dialog_id, uid: uid, text: text

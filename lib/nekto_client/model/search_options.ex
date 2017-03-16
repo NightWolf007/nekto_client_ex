@@ -19,6 +19,7 @@ defmodule NektoClient.Model.SearchOptions do
                                        my_age_from: 18, my_age_to: 21,
                                        wish_age: ["18t21"]}
   """
+  @spec new(Map.t) :: %NektoClient.Model.SearchOptions{}
   def new(hash) do
     %NektoClient.Model.SearchOptions{
       my_sex: Map.get(hash, :my_sex),
@@ -42,6 +43,7 @@ defmodule NektoClient.Model.SearchOptions do
       %{my_sex: "M", wish_sex: "F", my_age_from: "18", my_age_to: "21",
         wish_age: ["18t21"]}
   """
+  @spec serialize(%NektoClient.Model.SearchOptions{}) :: Map.t
   def serialize(search) do
     %{
       my_sex: to_string(search.my_sex),

@@ -23,6 +23,7 @@ defmodule NektoClient.Http.Cookies do
        {"expires", "Sat, 20-Jan-18 00:37:15 GMT"}, {"path", "/"},
        {"domain", ".nekto.me"}, {"HttpOnly"}]
   """
+  @spec parse(String.t) :: list({String.t, String.t})
   def parse(cookies) do
     cookies
     |> String.split("; ")

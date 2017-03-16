@@ -9,6 +9,7 @@ defmodule NektoClient.Http.Client do
   @doc """
   Gets headers from nekto chat and parses chat_token
   """
+  @spec chat_token!(String.t) :: String.t
   def chat_token!(host) do
     HTTPoison.head!(chat_url(host)).headers
     |> Headers.find("Set-Cookie")

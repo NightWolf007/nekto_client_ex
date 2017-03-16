@@ -1,43 +1,10 @@
-defmodule NektoClient.WebSocket.ClientSpec do
+defmodule NektoClient.WebSocket.SenderSpec do
   use ESpec
 
   alias Socket.Web
+  alias NektoClient.Model.SearchOptions
 
-  let :host, do: "chat.nekto.me"
-  let :path, do: "/websocket"
   let :socket, do: "socket"
-
-  describe ".connect!/1" do
-    it "connects to host" do
-      allow Web |> to(accept :connect!,
-        fn(host) -> expect host |> to(eq host()) end
-      )
-      described_module().connect!(host())
-    end
-
-    it "returns socket" do
-      allow Web |> to(accept :connect!, fn(_) -> socket() end)
-      expect described_module().connect!(host()) |> to(eq socket())
-    end
-  end
-
-  describe ".connect!/2" do
-    it "connects to host with args" do
-      allow Web |> to(accept :connect!,
-        fn(host, args) ->
-          expect host |> to(eq host())
-          expect args |> to(eq [path: path()])
-        end
-      )
-      described_module().connect!(host(), path: path())
-    end
-
-    it "returns socket" do
-      allow Web |> to(accept :connect!, fn(_, _) -> socket() end)
-      expect described_module().connect!(host(), path: path())
-      |> to(eq socket())
-    end
-  end
 
   describe ".send!/3" do
     let :action, do: "ACTION"
@@ -54,42 +21,6 @@ defmodule NektoClient.WebSocket.ClientSpec do
         end
       )
       described_module().send!(socket(), action(), message())
-    end
-  end
-
-  describe ".recv!/1" do
-    let :message, do: %{"message" => "message"}
-    let :encoded_message do
-      Poison.encode!(message())
-    end
-
-    context "when it receives text message" do
-      let :type, do: :text
-
-      it "receives text message sand returns json message" do
-        allow Web |> to(accept :recv!,
-          fn(socket) ->
-            expect socket |> to(eq socket())
-            {type(), encoded_message()}
-          end
-        )
-        expect described_module().recv!(socket()) |> to(eq {:json, message()})
-      end
-    end
-
-    context "when it receives other message" do
-      let :type, do: :ping
-
-      it "receives text message sand returns json message" do
-        allow Web |> to(accept :recv!,
-          fn(socket) ->
-            expect socket |> to(eq socket())
-            {type(), encoded_message()}
-          end
-        )
-        expect described_module().recv!(socket())
-        |> to(eq {:ping, encoded_message()})
-      end
     end
   end
 
@@ -130,11 +61,14 @@ defmodule NektoClient.WebSocket.ClientSpec do
   end
 
   describe ".search_company!/2" do
-    let :params, do: %{param: "param"}
+    let :search_options, do: SearchOptions.new(%{my_sex: "M", wish_sex: "W"})
 
     let :action, do: "SEARCH_COMPANY"
     let :encoded_message do
-      params() |> Map.merge(%{action: action()}) |> Poison.encode!
+      search_options()
+      |> SearchOptions.serialize()
+      |> Map.merge(%{action: action()})
+      |> Poison.encode!
     end
 
     it "sends search_company message" do
@@ -144,7 +78,7 @@ defmodule NektoClient.WebSocket.ClientSpec do
           expect message |> to(eq {:text, encoded_message()})
         end
       )
-      described_module().search_company!(socket(), params())
+      described_module().search_company!(socket(), search_options())
     end
   end
 
