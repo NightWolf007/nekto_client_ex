@@ -4,20 +4,41 @@ defmodule NektoClient do
   """
 
   alias Socket.Web
+  alias NektoClient.Http.Client
 
   @doc """
-  Establishes WebSocket connection with host
-  """
-  @spec connect!(String.t) :: Socket.Web.t
-  def connect!(host) do
-    Web.connect! host
-  end
-
-  @doc """
-  Establishes WebSocket connection with host with args
+  Establishes WebSocket connection with custom host and args
   """
   @spec connect!(String.t, Keyword.t) :: Socket.Web.t
   def connect!(host, args) do
     Web.connect! host, args
+  end
+
+  @doc """
+  Establishes WebSocket connection
+  """
+  @spec connect! :: Socket.Web.t
+  def connect! do
+    connect!(config_ws_host(), path: config_ws_path())
+  end
+
+  @doc """
+  Requests new chat_token by http
+  """
+  @spec chat_token! :: String.t
+  def chat_token! do
+    Client.chat_token! config_host()
+  end
+
+  defp config_host do
+    Application.get_env(:nekto_client, :host)
+  end
+
+  defp config_ws_host do
+    Application.get_env(:nekto_client, :ws_host)
+  end
+
+  defp config_ws_path do
+    Application.get_env(:nekto_client, :ws_path)
   end
 end
