@@ -52,6 +52,17 @@ defmodule NektoClientSpec do
     end
   end
 
+  describe "disconnect/1" do
+    it "closes connection to socket" do
+      allow Web |> to(accept :close,
+        fn(socket) ->
+          expect socket |> to(eq socket())
+        end
+      )
+      described_module().disconnect(socket())
+    end
+  end
+
   describe ".chat_token!" do
     let :host, do: "nekto.me"
 

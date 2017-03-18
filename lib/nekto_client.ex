@@ -9,7 +9,7 @@ defmodule NektoClient do
   @doc """
   Establishes WebSocket connection with custom host and args
   """
-  @spec connect!(String.t, Keyword.t) :: Socket.Web.t
+  @spec connect!(String.t, Keyword.t) :: Socket.Web.t | no_return
   def connect!(host, args) do
     Web.connect! host, args
   end
@@ -17,9 +17,17 @@ defmodule NektoClient do
   @doc """
   Establishes WebSocket connection
   """
-  @spec connect! :: Socket.Web.t
+  @spec connect! :: Socket.Web.t | no_return
   def connect! do
     connect!(config_ws_host(), path: config_ws_path())
+  end
+
+  @doc """
+  Closes WebSocket connection
+  """
+  @spec disconnect(Socket.Web.t) :: :ok | {:error, Socket.Web.error}
+  def disconnect(socket) do
+    Web.close(socket)
   end
 
   @doc """
